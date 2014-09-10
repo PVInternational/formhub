@@ -705,7 +705,16 @@ def attachment_url(request, size='medium'):
         pass
     else:
         if media_url:
-            return redirect(media_url)
+            original_attachment = result[0]
+            original_attachment = '/home/fhuser/formhub/%s' % original_attachment.media_file
+
+            try:
+                with open(original_attachment, 'rb') as f:
+                    return HttpResponse(f.read(), mimetype='image/jpeg')
+            except:
+                # TODO: log this somewhere
+                # image not found, 404, S3ResponseError timeouts
+                pass
     return HttpResponseNotFound(_(u'Error: Attachment not found'))
 
 
